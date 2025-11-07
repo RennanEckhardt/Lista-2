@@ -1,146 +1,179 @@
-🧾 README.md
-# 🧠 Segmentação e Representação Geométrica de Regiões
+# 🎯 Segmentação e Representação Geométrica de Imagens
 
-Este projeto faz parte de um trabalho prático da disciplina **Processamento e Análise de Imagens**, com o objetivo de comparar diferentes métodos de segmentação e representar geometricamente objetos detectados em uma imagem real.
-
-As implementações foram feitas em **Python**, utilizando as bibliotecas **OpenCV**, **NumPy** e **Matplotlib**.
-
----
-
-## 📁 Estrutura do Projeto
-
-
-
-📦 Segmentacao-Geometria
-┣ 📜 1_canny_sobel.py
-┣ 📜 2_isolamento_objeto.py
-┣ 📜 3_deteccao_circulo.py
-┣ 📜 4_aproximacao_poligonal.py
-┗ 📜 README.md
-
+> **Disciplina:** Processamento e Análise de Imagens  
+> **Instituição:** Pontifícia Universidade Católica de Minas Gerais  
+> **Autor:** Rennan Moreira  
+> **Data:** Novembro de 2025
 
 ---
 
-## ⚙️ Requisitos
+## 📋 Sobre o Projeto
 
-Certifique-se de ter as bibliotecas abaixo instaladas:
+Este projeto implementa um pipeline completo de **processamento digital de imagens** para segmentação, detecção e representação geométrica de objetos. O trabalho foca na análise de uma bola, aplicando técnicas clássicas de visão computacional para:
+
+- Detectar bordas e contornos
+- Isolar objetos do fundo
+- Identificar formas geométricas (círculos)
+- Simplificar representações complexas
+
+O projeto está dividido em módulos independentes que podem ser executados separadamente ou através de um script unificado.
+
+---
+
+## 🧩 Estrutura do Pipeline
+
+### **1. Detecção de Bordas** → `1_canny_sobel.py`
+
+Aplica dois algoritmos clássicos de detecção de bordas para realçar contornos na imagem:
+
+- **Canny**: Detector multiestágio com supressão não-máxima e histerese
+  - Gera bordas finas, contínuas e precisas
+  - Robusto a ruídos graças à suavização Gaussiana
+  - Sensível à escolha dos limiares (100 e 200)
+
+- **Sobel**: Operador baseado em gradientes direcionais
+  - Simples e computacionalmente eficiente
+  - Produz bordas mais espessas e menos definidas
+  - Mais sensível a variações locais de intensidade
+
+**Saída:** Comparação visual entre bordas detectadas por Canny e Sobel
+
+---
+
+### **2. Isolamento do Objeto** → `2_isolamento_objeto.py`
+
+Segmenta o objeto principal (bola) utilizando técnicas de processamento morfológico:
+
+**Técnicas aplicadas:**
+- **Limiarização binária** (`cv.threshold`) — Separa objeto do fundo
+- **Operações morfológicas** (`cv.morphologyEx`) — Remove ruídos com abertura/fechamento
+- **Detecção de contornos** (`cv.findContours`) — Identifica regiões conectadas
+- **Seleção por área** — Isola o maior contorno (objeto de interesse)
+
+**Saída:** Máscara binária e objeto isolado com fundo removido
+
+---
+
+### **3. Detecção de Círculos** → `3_deteccao_circulo.py`
+
+Utiliza a **Transformada de Hough** para reconhecer formas circulares:
+
+**Processo:**
+1. Suavização da imagem para reduzir falsos positivos
+2. Aplicação de `cv.HoughCircles` com parâmetros otimizados
+3. Criação de máscara circular precisa
+4. Isolamento do interior do círculo detectado
+
+**Saída:** Bola segmentada com precisão circular e máscara correspondente
+
+---
+
+### **4. Aproximação Poligonal** → `4_aproximacao_poligonal.py`
+
+Simplifica o contorno do objeto usando o **algoritmo de Douglas-Peucker**:
+
+**Características:**
+- Reduz a complexidade do contorno preservando sua forma geral
+- Parâmetro ε = 0.01 × perímetro controla a precisão
+- Redução de 1760 vértices → 21 vértices no exemplo
+- Útil para representação geométrica e análise de formas
+
+**Saída:** Contorno poligonal simplificado sobre a imagem isolada
+
+---
+
+## 🚀 Execução
+
+### **Executar o pipeline completo:**
+```bash
+python main.py
+```
+
+### **Executar módulos individualmente:**
+```bash
+python 1_canny_sobel.py
+python 2_isolamento_objeto.py
+python 3_deteccao_circulo.py
+python 4_aproximacao_poligonal.py
+```
+
+---
+
+## 📦 Dependências
 
 ```bash
-pip install opencv-python matplotlib numpy
+pip install opencv-python numpy matplotlib
+```
 
-🧩 Etapas do Projeto
-🧱 1. Detecção de Bordas (Canny e Sobel)
+**Requisitos:**
+- Python 3.7+
+- OpenCV 4.x
+- NumPy
+- Matplotlib
 
-Arquivo: 1_canny_sobel.py
+---
 
-Neste script, são aplicados dois métodos clássicos de detecção de bordas:
+## 📊 Resultados
 
-Canny: utiliza suavização gaussiana, cálculo de gradiente e limiarização por histerese.
+O projeto demonstra a eficácia de diferentes técnicas de processamento:
 
-Sobel: calcula o gradiente da intensidade nos eixos X e Y.
+| Técnica | Vantagens | Limitações |
+|---------|-----------|------------|
+| **Canny** | Bordas finas e precisas, robusto a ruído | Sensível aos parâmetros |
+| **Sobel** | Rápido e simples | Bordas espessas, sensível a ruído |
+| **Hough** | Detecção precisa de formas circulares | Requer ajuste de parâmetros |
+| **Douglas-Peucker** | Simplificação eficiente | Pode perder detalhes importantes |
 
-Ambos os resultados são comparados lado a lado com a imagem original.
+---
 
-python 1_canny_sobel.py
+## 🧠 Conceitos Abordados
 
+- **Detecção de bordas**: Identificação de descontinuidades de intensidade
+- **Limiarização**: Segmentação por níveis de intensidade
+- **Morfologia matemática**: Operações de abertura, fechamento e erosão
+- **Transformada de Hough**: Reconhecimento de formas geométricas
+- **Aproximação poligonal**: Simplificação de contornos complexos
 
-Saída esperada:
+---
 
-Imagem original
+## 📁 Estrutura do Repositório
 
-Bordas com Canny
+```
+.
+├── 1_canny_sobel.py              # Detecção de bordas
+├── 2_isolamento_objeto.py         # Segmentação do objeto
+├── 3_deteccao_circulo.py          # Detecção via Hough
+├── 4_aproximacao_poligonal.py     # Simplificação de contorno
+├── main.py                        # Pipeline completo
+├── README.md                      # Documentação
+└── imagens/                       # Recursos de entrada
+```
 
-Bordas com Sobel
+---
 
-Essas bordas são fundamentais para isolar regiões e contornos em etapas posteriores.
+## 🔗 Links Úteis
 
-⚪ 2. Isolamento do Objeto de Interesse
+- **Google Colab**: [Projeto Online](https://colab.research.google.com/drive/1V1q9SLXy8c1I6JLVcnQj9QC0_P4Ul6Sx?usp=sharing)
+- **Repositório GitHub**: [Lista-2](https://github.com/RennanEckhardt/Lista-2/tree/main)
 
-Arquivo: 2_isolamento_objeto.py
+---
 
-Aqui ocorre a segmentação da bola presente na imagem bola.jpg.
-O código aplica:
+## 📖 Relatório Técnico
 
-Limiarização binária (threshold)
+Para uma análise detalhada dos algoritmos, resultados experimentais e discussão teórica, consulte o relatório completo em formato LaTeX incluído no repositório.
 
-Operações morfológicas (abertura e fechamento)
+**Destaques do relatório:**
+- Fundamentação teórica dos algoritmos Canny e Sobel
+- Comparação qualitativa entre métodos de detecção
+- Análise de técnicas de representação geométrica
+- Discussão sobre aplicações e contextos de uso
 
-Detecção do maior contorno — considerado o objeto principal.
+---
 
-O resultado é uma máscara binária e uma imagem com o objeto isolado.
+## 📝 Licença
 
-python 2_isolamento_objeto.py
+Este projeto foi desenvolvido para fins acadêmicos como parte da disciplina de Processamento e Análise de Imagens.
 
+---
 
-Saída esperada:
-
-Máscara binária
-
-Objeto isolado
-
-⚙️ 3. Detecção de Círculo (Transformada de Hough)
-
-Arquivo: 3_deteccao_circulo.py
-
-Este script identifica a forma circular do objeto (bola) por meio da Transformada de Hough.
-
-Etapas:
-
-Suavização da imagem com medianBlur();
-
-Aplicação de cv.HoughCircles() para detectar círculos;
-
-Criação de uma máscara circular correspondente à bola;
-
-Isolamento da bola usando operação bitwise.
-
-python 3_deteccao_circulo.py
-
-
-Saída esperada:
-
-Bola isolada
-
-Máscara circular
-
-🔺 4. Representação Geométrica (Aproximação Poligonal)
-
-Arquivo: 4_aproximacao_poligonal.py
-
-Esta etapa realiza a representação geométrica do contorno da bola utilizando a técnica de Aproximação Poligonal (algoritmo de Douglas-Peucker).
-O objetivo é reduzir a complexidade do contorno, mantendo a forma principal do objeto.
-
-A função cv.drawContours() desenha o polígono sobre a imagem original ou sobre a bola isolada.
-
-python 4_aproximacao_poligonal.py
-
-
-Saída esperada:
-
-Contorno da bola com o polígono aproximado sobreposto
-
-🧠 Funcionamento Geral
-
-O pipeline completo pode ser entendido da seguinte forma:
-
-Entrada: imagem bola.jpg
-
-Pré-processamento: conversão em tons de cinza
-
-Segmentação: uso de Canny ou Sobel
-
-Isolamento: extração do maior contorno
-
-Detecção de forma: reconhecimento circular com Hough
-
-Descrição geométrica: simplificação por aproximação poligonal
-
-📸 Resultados Esperados
-Etapa	Resultado
-Detecção de bordas	Bordas precisas (Canny) e gradientes (Sobel)
-Isolamento	Objeto separado da cena
-Hough	Máscara circular representando a bola
-Aproximação Poligonal	Forma simplificada do contorno
-💡 Conclusão
-
-O projeto demonstra a integração entre métodos de segmentação, filtragem e representação geométrica, evidenciando como diferentes técnicas podem ser combinadas para descrever e analisar objetos em imagens.
+**Desenvolvido com 💙 por Rennan Moreira**
